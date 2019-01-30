@@ -5,6 +5,7 @@ For a fully guided walk through of setting up and configuring this sample, see t
 This repository shows how to successfully setup deploying to non-scratch orgs (i.e. Sandbox or Production) with Bamboo. We make a few assumptions in this README:
 
 - You know how to get your GitHub repository setup with Bamboo. (Here's their [Getting Started guide](https://confluence.atlassian.com/bamboo/getting-started-with-bamboo-289277283.html).)
+
 - You have properly setup JWT-Based Authorization Flow (i.e. headless). We recommended using [these steps for generating your Self-Signed SSL Certificate](https://devcenter.heroku.com/articles/ssl-certificate-self). 
 
 If any any of these assumptions aren't true, the following steps won't work.
@@ -29,7 +30,7 @@ If any any of these assumptions aren't true, the following steps won't work.
 
     Create a plan variable named `SF_CONSUMER_KEY`.
 
-    Create an plan variable named `SF_USERNAME`.
+    Create a plan variable named `SF_USERNAME`.
 
 8) Encrypt your `server.key` file that you generated previously and add the encrypted file (`server.key.enc`) to the folder named `assets`.
 
@@ -37,7 +38,9 @@ If any any of these assumptions aren't true, the following steps won't work.
 
 9) Setup Bamboo [plan variable](https://confluence.atlassian.com/bamboo/defining-plan-variables-289276859.html) for the password you used to encrypt your `server.key` file.
 
-    Create an plan variable named `SERVER_KEY_PASSWORD`.
+    Create a plan variable named `SERVER_KEY_PASSWORD`.
+
+10) Create a Bamboo plan with the `build.sh` included in the root directory of the git repository.
 
 And you should be ready to go! Now when you commit and push a change, your change will kick off a Bamboo build.
 
