@@ -39,7 +39,7 @@ This repository shows how to successfully set up deploying to non-scratch orgs (
 
     Create a plan variable named `SERVER_KEY_PASSWORD`.
 
-10) Create a Bamboo plan with the build file for your operating system selected (`build.bat` for Windows and `build.sh` for all others). The build files are included in the root directory of the Git repository.
+10) Create a Bamboo plan with the build file for your operating system (`build.bat` for Windows and `build.sh` for all others). The build files are included in the root directory of the Git repository.
 
 Now you're ready to go! When you commit and push a change, your change kicks off a Bamboo build.
 
