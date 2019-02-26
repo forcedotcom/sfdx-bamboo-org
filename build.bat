@@ -14,7 +14,7 @@ set SFDX_LOG_LEVEL="DEBUG"
 set DEPLOYDIR="src"
 set TESTLEVEL="RunLocalTests"
 
-REM Output CLI version and plugin information
+REM Output CLI version and plug-in information
 sfdx --version
 sfdx plugins --core
 
