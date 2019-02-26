@@ -1,5 +1,5 @@
 #
-# Download the SFDX CLI and install it
+# Download Salesforce CLI and install it
 #
 
 # Decrypt server key
@@ -15,13 +15,13 @@ export SFDX_LOG_LEVEL=DEBUG
 export DEPLOYDIR=src
 export TESTLEVEL=RunLocalTests
 
-# Install SFDX
+# Install CLI
 mkdir sfdx
 wget -qO- $CLIURL | tar xJ -C sfdx --strip-components 1
 "./sfdx/install"
 export PATH=./sfdx/$(pwd):$PATH
 
-# Output SFDX version and plugin information
+# Output CLI version and plug-in information
 sfdx --version
 sfdx plugins --core
 
@@ -29,11 +29,11 @@ sfdx plugins --core
 # Deploy metadata to Salesforce
 #
 
-# Authenticate to Salesforce using server key
+# Authenticate to Salesforce using the server key
 sfdx force:auth:jwt:grant --instanceurl https://test.salesforce.com --clientid $bamboo_SF_CONSUMER_KEY --jwtkeyfile assets/server.key --username $bamboo_SF_USERNAME --setalias UAT 
 
 # Deploy metadata and execute unit tests
 sfdx force:mdapi:deploy --wait 10 --deploydir $DEPLOYDIR --targetusername UAT --testlevel $TESTLEVEL
 
-# Example shows how to run a check only deploy
+# Example shows how to run a check-only deploy
 #- sfdx force:mdapi:deploy --checkonly --wait 10 --deploydir $DEPLOYDIR --targetusername UAT --testlevel $TESTLEVEL
