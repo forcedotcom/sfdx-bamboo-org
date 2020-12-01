@@ -30,7 +30,7 @@ sfdx plugins --core
 #
 
 # Authenticate to Salesforce using the server key
-sfdx force:auth:jwt:grant --instanceurl https://test.salesforce.com --clientid $bamboo_SF_CONSUMER_KEY --jwtkeyfile assets/server.key --username $bamboo_SF_USERNAME --setalias UAT 
+sfdx auth:jwt:grant --instanceurl https://test.salesforce.com --clientid $bamboo_SF_CONSUMER_KEY --jwtkeyfile assets/server.key --username $bamboo_SF_USERNAME --setalias UAT 
 
 # Deploy metadata and execute unit tests
 sfdx force:mdapi:deploy --wait 10 --deploydir $DEPLOYDIR --targetusername UAT --testlevel $TESTLEVEL
