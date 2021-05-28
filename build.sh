@@ -3,7 +3,7 @@
 #
 
 # Setup SFDX environment variables
-export CLIURL=https://developer.salesforce.com/media/salesforce-cli/sfdx-linux-amd64.tar.xz  
+export CLIURL=https://developer.salesforce.com/media/salesforce-cli/sfdx/channels/stable/sfdx-linux-amd64.tar.xz
 export SFDX_AUTOUPDATE_DISABLE=false
 export SFDX_USE_GENERIC_UNIX_KEYCHAIN=true
 export SFDX_DOMAIN_RETRY=300
@@ -25,14 +25,14 @@ sfdx --version
 sfdx plugins --core
 
 # Decrypt server key
-openssl aes-256-cbc -d -md md5 -in assets/server.key.enc -out assets/server.key -k $bamboo_SERVER_KEY_PASSWORD
+openssl enc -nosalt -aes-256-cbc -d -in assets/server.key.enc -out assets/server.key -base64 -K $DECRYPTION_KEY -iv $DECRYPTION_IV
 
 #
 # Deploy metadata to Salesforce
 #
 
 # Authenticate to Salesforce using the server key
-sfdx auth:jwt:grant --instanceurl https://test.salesforce.com --clientid $bamboo_SF_CONSUMER_KEY --jwtkeyfile assets/server.key --username $bamboo_SF_USERNAME --setalias UAT 
+sfdx auth:jwt:grant --instanceurl $ENDPOINT  --clientid $CONSUMER_KEY --jwtkeyfile assets/server.key --username $USER_NAME --setalias UAT
 
 # Deploy metadata and execute unit tests
 sfdx force:mdapi:deploy --wait 10 --deploydir $DEPLOYDIR --targetusername UAT --testlevel $TESTLEVEL
