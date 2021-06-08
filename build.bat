@@ -3,7 +3,7 @@ REM Download Salesforce CLI and install it
 REM
 
 REM Decrypt server key
-openssl aes-256-cbc -d -md md5 -in assets/server.key.enc -out assets/server.key -k %bamboo_SERVER_KEY_PASSWORD%
+openssl enc -nosalt -aes-256-cbc -d -in assets/server.key.enc -out assets/server.key -base64 -K %DECRYPTION_KEY% -iv %DECRYPTION_IV%
 
 REM Set up SFDX environment variables
 set SFDX_AUTOUPDATE_DISABLE="false"
@@ -23,7 +23,7 @@ REM Deploy metadata to Salesforce
 REM
 
 REM Authenticate to Salesforce using the server key
-sfdx auth:jwt:grant --instanceurl https://test.salesforce.com --clientid %bamboo_SF_CONSUMER_KEY% --jwtkeyfile assets/server.key --username %bamboo_SF_USERNAME% --setalias UAT 
+sfdx auth:jwt:grant --instanceurl %ENDPOINT% --clientid %CONSUMER_KEY% --jwtkeyfile assets/server.key --username %USER_NAME% --setalias UAT 
 
 REM Deploy metadata and execute unit tests
 sfdx force:mdapi:deploy --wait 10 --deploydir %DEPLOYDIR% --targetusername UAT --testlevel %TESTLEVEL%

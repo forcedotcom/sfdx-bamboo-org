@@ -27,23 +27,54 @@ This repository shows how to successfully set up deploying to non-scratch orgs (
 
 7) Set up Bamboo [plan variables](https://confluence.atlassian.com/bamboo/defining-plan-variables-289276859.html) for your Salesforce `Consumer Key` and `Username`. Note that this username is the username that you use to access your Salesforce org.
 
-    Create a plan variable named `SF_CONSUMER_KEY`.
+    Create a plan variable named `CONSUMER_KEY`.
 
-    Create a plan variable named `SF_USERNAME`.
+    Create a plan variable named `USER_NAME`.
 
-8) Encrypt the generated `server.key` file and add the encrypted file (`server.key.enc`) to the folder named `assets`.
+8) Encrypt and store the generated `server.key`.  IMPORTANT!  For security reasons, don't store the `server.key` within the project.
 
-    `openssl aes-256-cbc -salt -e -in server.key -out server.key.enc -k password`
+- First, generate a key and initializtion vector (iv) to encrypt your `server.key` file locally.  The `key` and `iv` are used by AppVeyor to decrypt your server key in the build environment.
 
-9) Set up Bamboo [plan variable](https://confluence.atlassian.com/bamboo/defining-plan-variables-289276859.html) for the password you used to encrypt your `server.key` file.
+```bash
+$ openssl enc -aes-256-cbc -k <passphrase here> -P -md sha1 -nosalt
+  key=E5E9FA1BA31ECD1AE84F75CAAA474F3A663F05F412028F81DA65D26EE56424B2
+  iv =E93DA465B309C53FEC5FF93C9637DA58
+```
 
-    Create a plan variable named `SERVER_KEY_PASSWORD`.
+> Make note of the `key` and `iv` values output to the screen. You'll use the values following `key=` and `iv =` to encrypt your `server.key`.
+
+- Encrypt the `server.key` using the newly generated `key` and `iv` values. Use the `key` and `iv` values only once. Don't use them to encrypt more than the `server.key`. While you can re-use this pair to encrypt other things, it's considered a security violation to do so. Every time you run the command above, it generates a new `key` and `iv` value. You can't regenerate the same pair. If you lose these values, generated new ones and encrypt again.
+
+```bash
+openssl enc -nosalt -aes-256-cbc -in your_key_location/server.key -out assets/server.key.enc -base64 -K <key from above> -iv <iv from above>
+```
+ This command replaces the existing `server.key.enc` with your encrypted version.
+ 
+- Store the `key`, and `iv` values somewhere safe. You'll use these values in a subsequent step in the AppVeyor UI. These values are considered *secret* so please treat them as such.
+
+
+9) Set up Bamboo [plan variable](https://confluence.atlassian.com/bamboo/defining-plan-variables-289276859.html) for the `key` and `iv` you used to encrypt your `server.key` file.
+
+    Create a plan variable named `DECRYPTION_KEY`.
+    Create a plan variable named `DECRYPTION_IV`.
 
 10) Create a Bamboo plan with the build file for your operating system (`build.bat` for Windows and `build.sh` for all others). The build files are included in the root directory of the Git repository.
 
 Now you're ready to go! When you commit and push a change, your change kicks off a Bamboo build.
 
 Enjoy!
+
+## Environment Variables
+
+| Env Var                       | Description                                                                                                     |
+| ----------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| CONSUMER_KEY                  | From your JWT-based connected app on Salesforce, retrieve the generated `Consumer Key` from your Dev Hub org.   |
+| USER_NAME                     | This username is the username that you use to access your Dev Hub.                                              |
+| ENDPOINT                      | the login URL of the instance the org lives on.                                                                 |
+| DECRYPTION_KEY                | `server.key` encryption key.                                                                                    |
+| DECRYPTION_IV                 | `server.key` encryption initialization Vector.                                                                  |
+| DX_CLI_URL_CUSTOM             | By default, the script installs the current version of Salesforce CLI. To install the release candidate, set the `DX_CLI_URL_CUSTOM` local variable to the appropriate URL.|
+
 
 ## Contributing to the Repository ###
 
